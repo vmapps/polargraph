@@ -13,13 +13,17 @@
 	<div id="graph"></div>
 
 	<script>
+	// run when webpage loaded and ready
 	$( function() {
 
-		// data for indexes, data for graph, data for events
+		// data for indexes, data for graph, data for selected days
 		var data_i = []
 		var data_g = []
         var data_e = {}
+		// data used in graph
+		var graphdata = []
 
+		// initialize jQuery UI Datepicker component
 		$('#datepicker').datepicker({
 			dateFormat: 'yy/mm/yy-mm-dd',
 			showOn: "button",
@@ -27,6 +31,7 @@
 			buttonImageOnly: true,
 			buttonText: "Select date",
             beforeShowDay: function( date ) {
+				// set specific class for selected days
                 var highlight = data_e[date];
                 if( highlight ) {
                      return [true, "event", highlight];
@@ -36,31 +41,37 @@
             }
 		});
 
+		// when new date is selected from datepicker
 		$('#datepicker').change( function() {
+			// get path to file from datepicker
+			// tmpd only contains dateshort format
 			file = $(this).val();
 			tmpd = file.slice(8,18)
-
+			// index position of selected day into array of managed days
 			idx = data_i.indexOf(file)
-			// if one item found
+			// if selected day already managed
 			if( idx != -1 ) {
-				// alert('Already here at position '+idx)
+				// remove data related to that day from arrays 
 				data_i.splice(idx,1)
 				data_g.splice(idx,1)
 				data_e[ new Date(tmpd+'T00:00:00') ] = ''
+				// update graph once data removed
 				Plotly.newPlot('graph', data_g, layout, {showSendToCloud: false});	
 			}
+			// if selected not exist
 			else {
+				// retrieve data from JSON file
 				getData( file )
+				// mark that day as managed
 				data_e[ new Date(tmpd+'T00:00:00') ] = new Date(tmpd+'T00:00:00' ).toString();
 
 			}
 
 		});
 
-		var graphdata = []
-
+		// configure graph layout
 		var layout= {
-			title: 'Daily HR',
+			title: 'Daily Heart Rate',
 			xaxis: {
 				title: 'Time',
 				tickformat: '%H:%M:%S',
@@ -74,36 +85,39 @@
 			},
 		};
 
+		// load data from JSON file, mark in array of indexes and process data
 		function getData(file) {
 			data_i.push( file )
 			Plotly.d3.json('/data/'+file+'.json', function(data){ processData(data) } );
 		}
 
+		// process data loaded from JSON file
 		function processData(json) {
-
+			// use rwo arrays for X and Y values
 			data_x = []
 			data_y = []
+			// get the day from JSON object
 			day = Object.keys(json)[0];
-
+			// find heart rates samples into JSON object and walk through
 			hr = json[day]['activityGraphData']['heartRateTimelineSamples'];
 			hr.forEach(function(d) {
+				// keep only timestamp and if found, set day as 01/01/1970 (for all points to be in same range)
 				dt = new Date(d.time).toISOString().slice(-13,-5)
-				// datax.push( new Date(d.time).toISOString().slice(-13,-5)  )
 				if(d.value) {
 					data_x.push( '1970-01-01T' + dt + '.000Z' )
 					data_y.push( d.value )
 				}
 			});
-
+			// configure graph plots (lines and markers here)
 			trace = { 
 				name: day,
 				x: data_x, 
 				y: data_y, 
 				mode: 'lines+markers',
 				type: 'scatter',
-				// line: {shape: 'spline'},
+				line: {shape: 'spline'},
 			};
-
+			// add data into global array of data and draw graph
 			data_g.push( trace )
 			Plotly.newPlot('graph', data_g, layout, {showSendToCloud: false});	
 		}
