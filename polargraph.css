@@ -1,0 +1,14 @@
+#graph {
+    position:absolute;
+    left:0;
+    right:0;
+    top:30;
+    bottom:0;
+    background-color:#000;
+}
+
+.event a {
+    background-color: #42B373 !important;
+    background-image :none !important;
+    color: #ffffff !important;
+}

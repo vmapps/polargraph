@@ -1,0 +1,121 @@
+<html>
+<head>
+	<!-- jQuery -->
+	<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+	<link rel="stylesheet" href="polargraph.css">
+	<!-- Plotly.js -->
+	<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+	<p>Select date to add/remove to graph : <input type="hidden" id="datepicker"></p>
+	<div id="graph"></div>
+
+	<script>
+	$( function() {
+
+		// data for indexes, data for graph, data for events
+		var data_i = []
+		var data_g = []
+        var data_e = {}
+
+		$('#datepicker').datepicker({
+			minDate: new Date(2019,2-1,16), // 16/02/2019
+			dateFormat: 'yy/mm/yy-mm-dd',
+			// altField: '#Zdatepicker',
+			// altFormat: 'yy/mm/yy-mm-dd',
+			showOn: "button",
+			buttonImage: "../gfx/calendar.gif",
+			buttonImageOnly: true,
+			buttonText: "Select date",
+            beforeShowDay: function( date ) {
+                var highlight = data_e[date];
+                if( highlight ) {
+                     return [true, "event", highlight];
+                } else {
+                     return [true, '', ''];
+                }
+            }
+		});
+
+		$('#datepicker').change( function() {
+			file = $(this).val();
+			tmpd = file.slice(8,18)
+
+			idx = data_i.indexOf(file)
+			// if one item found
+			if( idx != -1 ) {
+				// alert('Already here at position '+idx)
+				data_i.splice(idx,1)
+				data_g.splice(idx,1)
+				data_e[ new Date(tmpd+'T00:00:00') ] = ''
+				Plotly.newPlot('graph', data_g, layout, {showSendToCloud: false});	
+			}
+			else {
+				getData( file )
+				data_e[ new Date(tmpd+'T00:00:00') ] = new Date(tmpd+'T00:00:00' ).toString();
+
+			}
+
+		});
+
+		// getData('2019/02/2019-02-17');
+		getData('2019/04/2019-04-11');
+		// getData('2019/07/2019-07-01');
+
+		var graphdata = []
+
+		var layout= {
+			title: 'Daily HR',
+			xaxis: {
+				title: 'Time',
+				tickformat: '%H:%M:%S',
+			},
+			yaxis: {
+				title: 'HR',
+			},
+			showlegend: true,
+			legend: {
+				"orientation": "h"
+			},
+		};
+
+		function getData(file) {
+			data_i.push( file )
+			Plotly.d3.json('/data/'+file+'.json', function(data){ processData(data) } );
+		}
+
+		function processData(json) {
+
+			data_x = []
+			data_y = []
+			day = Object.keys(json)[0];
+
+			hr = json[day]['activityGraphData']['heartRateTimelineSamples'];
+			hr.forEach(function(d) {
+				dt = new Date(d.time).toISOString().slice(-13,-5)
+				// datax.push( new Date(d.time).toISOString().slice(-13,-5)  )
+				if(d.value) {
+					data_x.push( '1970-01-01T' + dt + '.000Z' )
+					data_y.push( d.value )
+				}
+			});
+
+			trace = { 
+				name: day,
+				x: data_x, 
+				y: data_y, 
+				mode: 'lines+markers',
+				type: 'scatter',
+				// line: {shape: 'spline'},
+			};
+
+			data_g.push( trace )
+			Plotly.newPlot('graph', data_g, layout, {showSendToCloud: false});	
+		}
+
+	});
+	</script>
+</body>
+</html>
