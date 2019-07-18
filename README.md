@@ -6,6 +6,7 @@ Purpose of this very simple tool is to :
 - read JSON data from Polar A360 tracker 
 - add data to web graph generated with Ploty javascript module
 - let user add/remove new data to the existing graph
+
 This small project has been first been developed to complete web
 interfaces proposed by Polar.
 
