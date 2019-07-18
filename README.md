@@ -35,12 +35,12 @@ Note that URL to get will look like this:
 https://flow.polar.com/api/activity-timeline/load?day=2019-07-08&maxSampleCount=200
 ```
 
-Once you have retrieved all JSON
 ## Run web server
-You could run a simple web server by running that commad into root directory:
+Once you have retrieved all JSON data, run a simple web server by running that commad into root directory:
 ```
 $ python -m SimpleHTTPServer 80
 ```
+Now, go to the browser and type `http://127.0.0.1/polargraph-heart-rate.html` to see the graph.
 
 ## Sample 
 ![polargraph-heart-rate](samples/polargraph-heart-rate.png)
