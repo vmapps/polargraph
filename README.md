@@ -15,6 +15,19 @@ Following javascript modules are required :
 - [jQuery UI](https://jqueryui.com/)
 - [Plotly.js](https://plot.ly/javascript/)
 
+## Get data from Polar Flow
+First of all, you will have to get data from A360 tracker. As the 
+activity tracker is able to synchronize with Polar Flow website,
+it is easier to extract data as JSON file directly from ths website:
+- log into [Polar Flow](https://flow.polar.com/) using Chrome
+- go to "Agenda" menu, then "Activity" submenu
+- in the meantime, open "Developer Tools" console in Chrome
+- open "Network" tab in the developer console
+- in Polar Flow, click on left arrow to select yesterday (do not use calendar)
+- in developer console, right-click on URL displayed in network tab
+- select "Copy" and "Copy link address"
+- now paste into Chrome URL bar to get JSON data with regards to yesterday
+
 ## Run web server
 You could run a simple web server by running that commad into root directory:
 ```
