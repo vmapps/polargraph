@@ -21,3 +21,5 @@ You could run a simple web server by running that commad into root directory:
 $ python -m SimpleHTTPServer 80
 ```
 
+## Sample 
+![polargraph-heart-rate](samples/polargraph-heart-rate.png)
