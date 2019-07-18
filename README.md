@@ -28,7 +28,7 @@ it is easier to extract data as JSON file directly from ths website:
 - in developer console, right-click on URL displayed in network tab
 - select `Copy` and `Copy link address`
 - now paste into Chrome URL bar to get JSON data with regards to yesterday
-- save JSON data into `data` local directory
+- save JSON data into `data` local directory as `/data/<year>/<month>/<year>-<month>-<day>.json`
 
 Note that URL to get will look like this:
 ```
