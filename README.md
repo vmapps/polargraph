@@ -42,5 +42,12 @@ $ python -m SimpleHTTPServer 80
 ```
 Now, go to the browser and type `http://127.0.0.1/polargraph-heart-rate.html` to see the graph.
 
+## User interface
+On top-left corner, you could click on calendar button to graph data from a specific day:
+- first click on a day will add data to the graph
+- second click on already selected day will remove data from the graph
+
+On top-right corner, you will find out Plotly graph toolbar.
+
 ## Sample 
 ![polargraph-heart-rate](samples/polargraph-heart-rate.png)
